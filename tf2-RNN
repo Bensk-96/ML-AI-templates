@@ -1,0 +1,54 @@
+# Import libraries 
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.datasets import imdb
+#from tensorflow.python.client import device_lib
+#tf.config.list_physical_devices('GPU')
+import os
+os.environ["TF_FORCE_GPU_ALLOW_GROWTH"]="true" # solve cancelled error
+
+# Set dataset parameters
+number_of_words = 20000 # 20000 most frequenctly used words
+max_len = 100 # max length of review
+
+# Load the IMDB dataset
+(X_train, y_train), (X_test, y_test) = imdb.load_data(num_words=number_of_words)
+
+# Padding all sequences to be the same length
+X_train = tf.keras.preprocessing.sequence.pad_sequences(X_train, maxlen= max_len)
+X_test = tf.keras.preprocessing.sequence.pad_sequences(X_test, maxlen= max_len)
+
+# Setting up Embedding Layer parameters
+vocab_size = number_of_words
+embed_size = 128
+
+# Build a RNN
+
+# Add the embeding layer
+model = tf.keras.Sequential()
+model.add(tf.keras.layers.Embedding(vocab_size, embed_size, input_shape=(X_train.shape[1],)))
+# Add the LSTM layer
+model.add(tf.keras.layers.LSTM(units=128, activation='tanh'))
+# Dropout layer
+#model.add(tf.keras.layers.Dropout(0.2))
+# Add the dense output layer
+model.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
+
+# Compiling the model
+model.compile(optimizer='rmsprop',loss='binary_crossentropy', metrics=['accuracy'])
+model.summary()
+
+# Training the model
+model.fit(X_train, y_train, epochs=3, batch_size=128)
+
+# Evaluating the model
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
+
+print("Test accuracy: {}".format(test_accuracy))
+
+# Save model
+model_json = model.to_json()
+with open("imdb_model.json", "w") as json_file:
+    json_file.write(model_json)
+# Save weights
+model.save_weights("imdb_model.hl5")
