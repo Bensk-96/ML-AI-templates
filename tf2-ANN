@@ -1,0 +1,57 @@
+# Import the libraries
+import numpy as np
+import datetime
+import tensorflow as tf
+from tensorflow.keras.datasets import fashion_mnist
+from tensorflow.python.client import device_lib
+import os
+os.environ["TF_FORCE_GPU_ALLOW_GROWTH"]="true" # solve cancelled error
+tf.config.list_physical_devices('GPU')
+
+# Loading the dataset
+(X_train, y_train), (X_test, y_test) = fashion_mnist.load_data()
+
+# Normalizing the images
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
+# Reshaping the dataset
+X_train = X_train.reshape(-1, 28*28)
+
+X_train.shape
+
+X_test = X_test.reshape(-1, 28*28)
+
+X_test.shape
+
+# Define the model
+model = tf.keras.models.Sequential()
+# Add the first layer (Dense layer)
+model.add(tf.keras.layers.Dense(units=128, activation='relu', input_shape=(784, )))
+# Hidden layers
+model.add(tf.keras.layers.Dense(units=128, activation='relu', input_shape=(128, )))
+model.add(tf.keras.layers.Dense(units=128, activation='relu', input_shape=(128, )))
+model.add(tf.keras.layers.Dense(units=128, activation='relu', input_shape=(128, )))
+model.add(tf.keras.layers.Dense(units=128, activation='relu', input_shape=(128, )))
+model.add(tf.keras.layers.Dense(units=128, activation='relu', input_shape=(128, )))
+# Dropout layer
+model.add(tf.keras.layers.Dropout(0.2))
+# Output layer
+model.add(tf.keras.layers.Dense(units=10, activation = 'softmax'))
+
+# Comiling the model
+model.compile(optimizer='adam',loss='sparse_categorical_crossentropy', metrics=['sparse_categorical_accuracy'])
+model.summary()
+
+# Training the model
+model.fit(X_train, y_train, epochs=10)
+
+test_loss, test_accuracy = model.evaluate(X_test, y_test)
+print("Test accuracy: {}".format(test_accuracy))
+
+# Save the model
+model_json = model.to_json()
+with open("fashion_model.json", "w") as json_file:
+    json_file.write(model_json)
+
+model.save_weights("fashion_model.hl5")
