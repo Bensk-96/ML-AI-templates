@@ -1,0 +1,79 @@
+## Import the libraries 
+import tensorflow as tf
+import numpy as np
+
+# Check tf version
+tf.__version__
+
+## Check for GPU
+import tensorflow as tf
+from tensorflow.python.client import device_lib
+tf.config.list_physical_devices('GPU')
+
+device_lib.list_local_devices()
+
+tf.test.is_built_with_cuda()
+
+## Constant 
+tensor_20 = tf.constant([[23,4],[32,51]])
+
+tensor_20
+
+# Shape of a tensor
+tensor_20.shape
+
+# Get value of a constant with numpy without the need of a session
+tensor_20.numpy()
+
+# Convernt numpy array to tensor
+numpy_tensor = np.array([[23,4],[32,51]])
+
+tensor_from_numpy = tf.constant(numpy_tensor)
+
+tensor_from_numpy
+
+## Variable
+
+# Define a variable
+tf2_variable = tf.Variable([[1.,2.,3.],[4.,5.,6.]])
+tf2_variable
+
+# Get value from a variable
+tf2_variable.numpy()
+
+# Change a specific value in the variable
+tf2_variable[0,2].assign(100)
+tf2_variable
+
+## Tensor operation
+
+tensor = tf.constant([[1,2],[3,4]])
+tensor
+
+# Addition between a scalar and a tensor
+tensor + 2
+
+# Multiplication between a scalar and a tensor
+tensor * 5
+
+# Numpy function on tf tensors
+np.square(tensor)
+
+np.sqrt(tensor)
+
+# Dot product between two tensors
+np.dot(tensor, tensor_20)
+
+## Strings
+tf_string = tf.constant("TensorFlow")
+tf_string
+
+tf.strings.length(tf_string)
+
+tf.strings.unicode_decode(tf_string, "UTF8")
+
+# String array of strings
+tf_string_array = tf.constant(["Tensorflow","Deep Learning","AI"])
+
+for string in tf_string_array:
+    print(string)
